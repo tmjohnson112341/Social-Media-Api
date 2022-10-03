@@ -1,4 +1,4 @@
 package com.cooksys.socialmedia.Services;
 
-public class TweetServices {
+public interface TweetServices {
 }

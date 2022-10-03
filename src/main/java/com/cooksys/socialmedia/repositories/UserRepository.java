@@ -1,5 +1,9 @@
 package com.cooksys.socialmedia.repositories;
 
-public interface UserRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.cooksys.socialmedia.entities.User;
+
+public interface UserRepository extends JpaRepository<User, Long> {
 
 }

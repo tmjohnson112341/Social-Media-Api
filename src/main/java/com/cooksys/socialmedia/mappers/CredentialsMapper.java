@@ -1,2 +1,8 @@
-package com.cooksys.socialmedia.mappers;public interface CredentialsMapper {
+package com.cooksys.socialmedia.mappers;
+
+import org.mapstruct.Mapper;
+
+@Mapper(componentModel = "spring")
+public interface CredentialsMapper {
+
 }

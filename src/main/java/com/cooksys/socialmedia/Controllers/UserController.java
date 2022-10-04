@@ -1,6 +1,6 @@
-package com.cooksys.socialmedia.Controllers;
+package com.cooksys.socialmedia.controllers;
 
-import com.cooksys.socialmedia.Services.UserServices;
+import com.cooksys.socialmedia.services.UserServices;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

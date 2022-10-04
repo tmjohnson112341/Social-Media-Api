@@ -8,6 +8,8 @@ import javax.persistence.*;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.boot.context.config.Profiles;
 
 @Entity
@@ -23,6 +25,7 @@ public class User {
 	@Embedded
 	private Credentials credentials;
 	
+	@CreationTimestamp
 	private Timestamp joined;
 	
 	private boolean deleted;

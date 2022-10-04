@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -24,6 +26,7 @@ public class User {
 	@Embedded
 	private Credentials credentials;
 	
+	@CreationTimestamp
 	private Timestamp joined;
 	
 	private boolean deleted;

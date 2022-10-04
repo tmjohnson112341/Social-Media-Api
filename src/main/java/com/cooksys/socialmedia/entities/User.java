@@ -32,5 +32,5 @@ public class User {
 	private boolean deleted;
 	
 	@Embedded
-	private Profiles profile; 
+	private Profile profile; 
 }

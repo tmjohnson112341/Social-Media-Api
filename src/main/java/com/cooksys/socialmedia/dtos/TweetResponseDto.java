@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 
 public class TweetResponseDto {
     private Integer id;
-    private User author;
+    private UserResponseDto author;
     private Timestamp posted;
     private String content;
     private TweetResponseDto inReplyTo;

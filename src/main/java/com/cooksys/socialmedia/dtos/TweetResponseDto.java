@@ -1,5 +1,7 @@
 package com.cooksys.socialmedia.dtos;
 
+import com.cooksys.socialmedia.entities.User;
+
 import java.sql.Timestamp;
 
 import com.cooksys.socialmedia.entities.User;

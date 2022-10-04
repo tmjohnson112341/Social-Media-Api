@@ -1,6 +1,10 @@
 package com.cooksys.socialmedia.dtos;
 
+import com.cooksys.socialmedia.entities.User;
+
 import java.sql.Timestamp;
+
+import com.cooksys.socialmedia.entities.User;
 
 public class TweetResponseDto {
     private Integer id;

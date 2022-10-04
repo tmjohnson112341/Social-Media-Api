@@ -1,17 +1,14 @@
 package com.cooksys.socialmedia.entities;
 
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.Set;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.CreationTimestamp;
+import javax.persistence.*;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.boot.context.config.Profiles;
 
 @Entity
 @NoArgsConstructor
@@ -26,11 +23,29 @@ public class User {
 	@Embedded
 	private Credentials credentials;
 	
-	@CreationTimestamp
 	private Timestamp joined;
 	
 	private boolean deleted;
 	
 	@Embedded
-	private Profile profile;
+	private Profiles profile;
+
+	@OneToMany
+	private List<Tweet> tweets;
+
+	@ManyToMany(mappedBy = "following")
+	private Set<User> followers;
+
+	@ManyToMany
+	private Set<User> following;
+
+	@ManyToMany(mappedBy = "user")
+	private Set<User> likes;
+
+	@ManyToMany(mappedBy = "user")
+	private Set<User> mentions;
+
+
+
+
 }

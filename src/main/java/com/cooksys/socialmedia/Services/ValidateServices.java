@@ -1,4 +1,4 @@
-package com.cooksys.socialmedia.Services;
+package com.cooksys.socialmedia.services;
 
 public interface ValidateServices {
 }

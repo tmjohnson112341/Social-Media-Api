@@ -1,17 +1,14 @@
 package com.cooksys.socialmedia.entities;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import javax.persistence.*;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 
 @Entity
 @NoArgsConstructor
@@ -24,11 +21,11 @@ public class Hashtag {
 	@Column(nullable = false, unique = true)
 	private String label;
 	
-	@CreationTimestamp
-	private Timestamp firstUsed;
+	private Timestamp firstUsed = Timestamp.valueOf(LocalDateTime.now());
 	
-	@UpdateTimestamp
-	private Timestamp lastUsed;
-	
+	private Timestamp lastUsed = Timestamp.valueOf(LocalDateTime.now());
+
+	@ManyToMany
+	private Set<Tweet> hashtags;
 	
 }

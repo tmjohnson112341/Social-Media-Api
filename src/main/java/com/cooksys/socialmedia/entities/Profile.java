@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 
-public class Profiles {
+public class Profile {
 	
 	private String firstName;
 

@@ -1,4 +1,6 @@
 package com.cooksys.socialmedia.services.impl;
 
-public class HashtagServicesImpl {
+@Service
+@RequiredArgsConstructor
+public class HashtagServicesImpl implements HashtagServices{
 }

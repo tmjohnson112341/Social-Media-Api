@@ -1,4 +1,6 @@
 package com.cooksys.socialmedia.services.impl;
 
-public class UserServicesImpl {
+@Service
+@RequiredArgsConstructor
+public class UserServicesImpl implements UserServices{
 }

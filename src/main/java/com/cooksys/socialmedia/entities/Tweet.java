@@ -50,12 +50,12 @@ public class Tweet {
 	private Tweet repostOf;
 
 	@ManyToMany
-	private Set<Tweet> likes;
+	private Set<User> likes;
 
 	@ManyToMany
-	private Set<Tweet> mentions;
+	private Set<User> mentions;
 
-	@ManyToMany(mappedBy = "tweet")
+	@ManyToMany
 	private Set<Hashtag> hashtags;
 
 

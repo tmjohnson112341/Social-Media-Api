@@ -6,9 +6,11 @@ import java.sql.Timestamp;
 
 import com.cooksys.socialmedia.entities.User;
 
+@NoArgsConstructor
+@Data
 public class TweetResponseDto {
-    private Integer id;
-    private User author;
+    private Long id;
+    private UserResponseDto author;
     private Timestamp posted;
     private String content;
     private TweetResponseDto inReplyTo;

@@ -1,11 +1,18 @@
 package com.cooksys.socialmedia.entities;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
+import org.hibernate.annotations.CreationTimestamp;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,7 +29,8 @@ public class Tweet {
 	@ManyToOne
 	private User author;
 	
-	private Timestamp posted = Timestamp.valueOf(LocalDateTime.now());
+	@CreationTimestamp
+	private Timestamp posted;
 	
 	private boolean deleted = false;
 
@@ -42,12 +50,12 @@ public class Tweet {
 	private Tweet repostOf;
 
 	@ManyToMany
-	private Set<Tweet> likes;
+	private Set<User> likes;
 
 	@ManyToMany
-	private Set<Tweet> mentions;
+	private Set<User> mentions;
 
-	@ManyToMany(mappedBy = "tweet")
+	@ManyToMany
 	private Set<Hashtag> hashtags;
 
 

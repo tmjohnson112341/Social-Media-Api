@@ -8,6 +8,8 @@ import javax.persistence.*;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.boot.context.config.Profiles;
 
 @Entity
@@ -23,14 +25,15 @@ public class User {
 	@Embedded
 	private Credentials credentials;
 	
+	@CreationTimestamp
 	private Timestamp joined;
 	
 	private boolean deleted;
 	
 	@Embedded
-	private Profiles profile;
+	private Profile profile;
 
-	@OneToMany
+	@OneToMany(mappedBy = "author")
 	private List<Tweet> tweets;
 
 	@ManyToMany(mappedBy = "following")
@@ -39,11 +42,11 @@ public class User {
 	@ManyToMany
 	private Set<User> following;
 
-	@ManyToMany(mappedBy = "user")
-	private Set<User> likes;
+	@ManyToMany(mappedBy = "likes")
+	private Set<Tweet> likedTweets;
 
-	@ManyToMany(mappedBy = "user")
-	private Set<User> mentions;
+	@ManyToMany(mappedBy = "mentions")
+	private Set<Tweet> tweetsMentioned;
 
 
 

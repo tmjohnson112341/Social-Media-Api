@@ -1,4 +1,6 @@
 package com.cooksys.socialmedia.services.impl;
 
-public class TweetServicesImpl {
+@Service
+@RequiredArgsConstructor
+public class TweetServicesImpl implements TweetServices{
 }

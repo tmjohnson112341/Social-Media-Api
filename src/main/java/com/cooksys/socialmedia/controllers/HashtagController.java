@@ -1,6 +1,6 @@
-package com.cooksys.socialmedia.Controllers;
+package com.cooksys.socialmedia.controllers;
 
-import com.cooksys.socialmedia.Services.HashtagServices;
+import com.cooksys.socialmedia.services.HashtagServices;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

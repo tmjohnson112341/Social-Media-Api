@@ -33,7 +33,7 @@ public class Hashtag {
 	@UpdateTimestamp
 	private Timestamp lastUsed;
 
-	@ManyToMany
-	private Set<Tweet> hashtags;
+	@ManyToMany(mappedBy = "hashtags")
+	private Set<Tweet> taggedTweets;
 	
 }

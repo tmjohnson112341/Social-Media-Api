@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.cooksys.socialmedia.entities.Hashtag;
+import com.cooksys.socialmedia.entities.User;
 import com.cooksys.socialmedia.repositories.HashTagRepository;
 import com.cooksys.socialmedia.repositories.UserRepository;
 import com.cooksys.socialmedia.services.ValidateServices;
@@ -30,13 +31,16 @@ public class ValidateServicesImpl implements ValidateServices {
 
 	@Override
 	public boolean validateUsername(String username) {
-		// TODO Auto-generated method stub
-		return false;
+		Optional<User>optionalUser = userRepository.findByCredentialsUsername(username);
+		if(optionalUser.isEmpty()) {
+			return false;
+		}else {
+			return true;
+		}
 	}
 
 	@Override
 	public boolean validateUsernameAvailable(String username) {
-		// TODO Auto-generated method stub
-		return false;
+		return !validateUsername(username);
 	}
 }

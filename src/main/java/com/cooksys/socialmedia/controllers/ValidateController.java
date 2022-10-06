@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/validate")
 public class ValidateController {
 
-    private ValidateServices validateServices;
+    private final ValidateServices validateServices;
 
 
     //@GetMapping("tag/exists/{label}") // Given hashtag exists
@@ -39,10 +39,5 @@ public class ValidateController {
     public boolean validateUsernameAvailable(@PathVariable String username) {
     	return validateServices.validateUsernameAvailable(username);
     }
-
-
-
-
-
 
 }

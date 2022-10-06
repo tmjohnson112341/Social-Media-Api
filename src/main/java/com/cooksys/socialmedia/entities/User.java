@@ -37,16 +37,23 @@ public class User {
 	private List<Tweet> tweets;
 
 	@ManyToMany(mappedBy = "following")
-	private Set<User> followers;
+	private List<User> followers;
 
 	@ManyToMany
-	private Set<User> following;
+	@JoinTable(name = "followers_following")
+	private List<User> following;
 
-	@ManyToMany(mappedBy = "likes")
-	private Set<Tweet> likedTweets;
+	@ManyToMany
+	@JoinTable(
+			name = "user_likes",
+			joinColumns = @JoinColumn(name ="user_id"),
+			inverseJoinColumns = @JoinColumn(name ="tweet_id")
+			)
+	
+	private List<Tweet> likedTweets;
 
 	@ManyToMany(mappedBy = "mentions")
-	private Set<Tweet> tweetsMentioned;
+	private List<Tweet> tweetsMentioned;
 
 
 }

@@ -1,8 +1,16 @@
 package com.cooksys.socialmedia.controllers;
 
+import com.cooksys.socialmedia.dtos.CredentialsDto;
+import com.cooksys.socialmedia.dtos.ProfileDto;
+import com.cooksys.socialmedia.dtos.UserRequestDto;
+import com.cooksys.socialmedia.dtos.UserResponseDto;
+import com.cooksys.socialmedia.mappers.UserMapper;
 import com.cooksys.socialmedia.services.UserServices;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -10,12 +18,21 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 public class UserController {
 
-    private UserServices userServices;
+    @Autowired
+    private final UserServices userServices;
+    @Autowired
+    private final UserMapper userMapper;
 
+    @GetMapping
+    public List<UserResponseDto> getAllUsers() {
+        return userServices.getAllUsers();
 
-//    @GetMapping //get all users (non-deleted)
+    }
 //
-//    @PostMapping //creates new user - reactivates deleted user
+    @PostMapping //creates new user - reactivates deleted user
+    public UserResponseDto newUser(@RequestBody UserRequestDto userRequestDto){
+        return userServices.createNewUser(userRequestDto);
+    }
 //
 //    @GetMapping("/@{username}") //retrieves user of given username
 //

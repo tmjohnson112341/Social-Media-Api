@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/validate")
 public class ValidateController {
 
-    private ValidateServices validateServices;
+    private final ValidateServices validateServices;
 
 
     //@GetMapping("tag/exists/{label}") // Given hashtag exists

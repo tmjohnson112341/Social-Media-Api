@@ -10,7 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.boot.context.config.Profiles;
+
 
 @Entity
 @NoArgsConstructor
@@ -47,8 +47,6 @@ public class User {
 
 	@ManyToMany(mappedBy = "mentions")
 	private Set<Tweet> tweetsMentioned;
-
-
 
 
 }

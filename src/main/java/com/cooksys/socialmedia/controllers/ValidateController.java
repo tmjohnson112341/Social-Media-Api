@@ -19,7 +19,7 @@ public class ValidateController {
 
     //@GetMapping("tag/exists/{label}") // Given hashtag exists
     
-    @GetMapping("tag/exists/{label")
+    @GetMapping("tag/exists/{label}")
     public boolean validateTag(@PathVariable String label) {
     	return validateServices.validateTag(label);
     }

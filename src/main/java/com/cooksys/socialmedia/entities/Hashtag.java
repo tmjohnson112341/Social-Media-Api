@@ -1,6 +1,7 @@
 package com.cooksys.socialmedia.entities;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -34,6 +35,6 @@ public class Hashtag {
 	private Timestamp lastUsed;
 
 	@ManyToMany(mappedBy = "hashtags")
-	private Set<Tweet> taggedTweets;
+	private List<Tweet> taggedTweets;
 	
 }

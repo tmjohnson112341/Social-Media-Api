@@ -167,7 +167,7 @@ public class Seeder implements CommandLineRunner {
         tweet1.setAuthor(user1);
         tweet1.setDeleted(false);
         tweet1.setContent("This is some content 1");
-        tweet1.setHashtags(new HashSet<>(Arrays.asList(hashtag1, hashtag2)));
+        tweet1.setHashtags(Arrays.asList(hashtag1, hashtag2));
 
         tweetRepository.saveAndFlush(tweet1);
 
@@ -176,7 +176,7 @@ public class Seeder implements CommandLineRunner {
         tweet2.setAuthor(user1);
         tweet2.setDeleted(false);
         tweet2.setContent("This is some content 2");
-        tweet2.setHashtags(new HashSet<>(Arrays.asList(hashtag1, hashtag2)));
+        tweet2.setHashtags(Arrays.asList(hashtag1, hashtag2));
 
         tweetRepository.saveAndFlush(tweet2);
 
@@ -186,7 +186,7 @@ public class Seeder implements CommandLineRunner {
         tweet3.setDeleted(false);
         // Set Content @PARAM String
         tweet3.setContent("This is some content 3");
-        tweet3.setHashtags(new HashSet<>(Arrays.asList(hashtag3, hashtag4)));
+        tweet3.setHashtags(Arrays.asList(hashtag3, hashtag4));
         tweetRepository.saveAndFlush(tweet3);
 
         // --- Start Tweet 4 ---
@@ -234,39 +234,44 @@ public class Seeder implements CommandLineRunner {
         user3.setTweets(user3Tweets);
         userRepository.saveAndFlush(user3);
 
-//        // ----- List of Liked Tweets -----
-//        user1.setLikedTweets(new HashSet<> (user3Tweets));
-//        userRepository.saveAndFlush(user1);
-//
-//        user2.setLikedTweets(new HashSet<> (user1Tweets));
-//        userRepository.saveAndFlush(user2);
-//
-//        user3.setLikedTweets(new HashSet<> (user2Tweets));
-//        userRepository.saveAndFlush(user3);
-//
-//        // ----- List of Following -----
-//        List<User> followingList = List.of(user2, user3, user4);
-//        user1.setFollowing(new HashSet<>(followingList));
-//        userRepository.saveAndFlush(user1);
-//        // ----- List of Followers -----
-//        List<User> followersList = List.of(user3, user5);
-//        user1.setFollowers(new HashSet<>(followersList));
-//        userRepository.saveAndFlush(user1);
+        // ----- List of Liked Tweets -----
+        user1.setLikedTweets(user1Tweets);
+        userRepository.saveAndFlush(user1);
+        
+        user2.setLikedTweets(user2Tweets);
+        userRepository.saveAndFlush(user2);
 
-        // ----- Tweet Mentions -----
-        Tweet mention1 = new Tweet();
-        mention1.setAuthor(user2);
-        mention1.setDeleted(false);
-        // Set Content @PARAM String
-        mention1.setContent("This is some content for tweet mention 1");
-        tweetRepository.saveAndFlush(mention1);
-//
-        // Following
+        user3.setLikedTweets(user3Tweets);
+        userRepository.saveAndFlush(user3);
+////
+//        // ----- List of Following -----
+
+        List<User> followingList = List.of(user2, user3, user4);
+        user1.setFollowing(followingList);
+        userRepository.saveAndFlush(user1);
+//        // ----- List of Followers -----
+
+        List<User> followersList = List.of(user3, user5);
+        user1.setFollowers(followersList);
+        userRepository.saveAndFlush(user1);
+
+//        // ----- Tweet Mentions -----
+//        Tweet mention1 = new Tweet();
+//        mention1.setAuthor(user2);
+//        mention1.setDeleted(false);
+//        mention1.set
+//        // Set Content @PARAM String
+//        mention1.setContent("This is some content for tweet mention 1");
+//        System.out.println(mention1.getAuthor());
+//        tweetRepository.saveAndFlush(mention1);
+////
+//         Following
+        
         List<User> following_1 = List.of(user2, user3, user4, deletedUser);
-        user1.setFollowing(new HashSet<>(following_1));
+        user1.setFollowing(following_1);
 
         List<User> followers_1 = List.of(user5, deletedUser);
-        user1.setFollowers(new HashSet<>(followers_1));
+        user1.setFollowers(followers_1);
         userRepository.saveAndFlush(user1);
 
     }

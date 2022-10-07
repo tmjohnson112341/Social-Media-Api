@@ -1,14 +1,11 @@
 package com.cooksys.socialmedia.controllers;
 
-import com.cooksys.socialmedia.dtos.CredentialsDto;
-import com.cooksys.socialmedia.dtos.TweetRequestDto;
-import com.cooksys.socialmedia.dtos.TweetResponseDto;
+import com.cooksys.socialmedia.dtos.*;
+import com.cooksys.socialmedia.entities.Tweet;
+import com.cooksys.socialmedia.entities.User;
 import com.cooksys.socialmedia.services.TweetServices;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -51,10 +48,19 @@ public class TweetController {
 
     }
 
-    //@PostMapping("/{id}/reply") //reply to tweet with given id (server creates inReplyTo relationship)
+    //@GetMapping("/tweets/{id}/likes") // retrieves the active users who have liked the tweet with the given id
+    public List<UserResponseDto> likedByUsers (@PathVariable Long id){
+        return tweetServices.likedByUsers(id);
+    }
+
+    //@PostMapping("/{id}/reply") //reply to tweet with given id (server creates inReplyTo relationship
     public TweetResponseDto replyToTweet (@PathVariable Long id) {
         return tweetServices.replyToTweet(id);
 
+    }
+    //@GetMapping("/{id}/replies") // retrieves the direct replies to the tweet with the given id
+    public List<TweetResponseDto> getReplies (@PathVariable Long id){
+        return tweetServices.getReplies(id);
     }
 
     //@PostMapping("/{id}/repost") //creates a repost tweet with given id (server creates repostOf property)
@@ -64,7 +70,7 @@ public class TweetController {
     }
 
     //@GetMapping("/{id}/tags") //retrieves tag associated with given id
-    public TweetResponseDto getTag (@PathVariable Long id) {
+    public List<HashtagDto> getTag (@PathVariable Long id) {
         return tweetServices.getTag(id);
 
     }
@@ -75,12 +81,12 @@ public class TweetController {
     }
 
     //@GetMapping("/{id}/reposts") //retrieves direct reposts of tweet with given id
-    public TweetResponseDto getReposts (@PathVariable Long id) {
+    public List<TweetResponseDto> getReposts (@PathVariable Long id) {
         return tweetServices.getReposts(id);
     }
 
     //GetMapping("/{id}/mentions") //retrieves users mentioned in tweet with given id
-    public TweetResponseDto getMentions (@PathVariable Long id) {
+    public List<UserResponseDto> getMentions (@PathVariable Long id) {
         return tweetServices.getMentions(id);
 
     }

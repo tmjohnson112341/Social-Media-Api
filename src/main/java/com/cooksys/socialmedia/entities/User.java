@@ -13,10 +13,10 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.CreationTimestamp;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
 
 @Entity
 @NoArgsConstructor
@@ -60,8 +60,6 @@ public class User {
 
 	@ManyToMany(mappedBy = "mentions")
 	private List<Tweet> tweetsMentioned;
-
-
 
 
 }

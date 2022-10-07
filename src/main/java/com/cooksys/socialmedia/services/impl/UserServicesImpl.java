@@ -2,6 +2,7 @@ package com.cooksys.socialmedia.services.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -131,15 +132,17 @@ public class UserServicesImpl implements UserServices{
 	}
 
 	@Override
+	//use filtering collections from baeldung
 	public List<UserResponseDto> userFollowers(String username) {
 		User usersFollowers = findUser(username);
-		return userMapper.entitiesToDtos(usersFollowers.getFollowers());
+		return userMapper.entitiesToDtos(usersFollowers.getFollowers().stream().filter(follower -> follower.isDeleted() == false).collect(Collectors.toList()));
 	}
 
 	@Override
+	//use filtering collections from baeldung
 	public List<UserResponseDto> userFollowing(String username) {
 		User usersFollowing = findUser(username);
-		return userMapper.entitiesToDtos(usersFollowing.getFollowing());
+		return userMapper.entitiesToDtos(usersFollowing.getFollowing().stream().filter(follow -> follow.isDeleted() == false).collect(Collectors.toList()));
 	}
 
 

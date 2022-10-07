@@ -21,6 +21,9 @@ import com.cooksys.socialmedia.services.TweetServices;
 
 import lombok.RequiredArgsConstructor;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -63,22 +66,48 @@ public class TweetServicesImpl implements TweetServices{
         }
         List <Hashtag> cookedHashtags = new ArrayList<>();
         for (int i = 0; i < rawHashtags.size(); i++){
-            // attempt to get tag from repository
-            // check if the hashtag exists via optional
-                // if it exists, update timestamp
-                // if it doesn't, add both timestamps and save it to repository
-            // add to cooked hashtags
             Optional<Hashtag> hashtagValidation = hashtagRepository.findByLabel(rawHashtags.get(i));
-
+            if (hashtagValidation.isPresent()){
+                Hashtag h = hashtagValidation.get();
+                h.setLastUsed(Timestamp.valueOf(LocalDateTime.now()));
+                h.getTaggedTweets().add(tweet);
+                hashtagRepository.saveAndFlush(h);
+                cookedHashtags.add(h);
+            }
+            else {
+                Hashtag h = new Hashtag();
+                h.setLabel(rawHashtags.get(i));
+                h.setFirstUsed(Timestamp.valueOf(LocalDateTime.now()));
+                h.setLastUsed(Timestamp.valueOf(LocalDateTime.now()));
+                h.getTaggedTweets().add(tweet);
+                hashtagRepository.saveAndFlush(h);
+                cookedHashtags.add(h);
+            }
         }
 
-        return null;
+        return cookedHashtags;
     }
 
     private List<User> mentionFinder (Tweet tweet) {
         String[] searcher = tweet.getContent().split("\\s+");
-        // if s.startswith "@" or "#"
-        return null;
+        List <String> rawMentions = new ArrayList<>();
+        for (int i = 0; i < searcher.length; i++) {
+            if (searcher[i].startsWith("@")) {
+                // check if user exists?
+                rawMentions.add(searcher[i].substring(1));
+            }
+        }
+        List <User> cookedMentions = new ArrayList<>();
+        for (int i = 0; i < rawMentions.size(); i++){
+            Optional<User> mentionValidation = userRepository.findByCredentialsUsername(rawMentions.get(i));
+            if (mentionValidation.isPresent()) {
+                User m = mentionValidation.get();
+                m.getTweetsMentioned().add(tweet);
+                userRepository.saveAndFlush(m);
+                cookedMentions.add(m);
+            }
+        }
+        return cookedMentions;
     }
 
     private List<Tweet> beforeChain (Tweet tweet){
@@ -141,7 +170,7 @@ public class TweetServicesImpl implements TweetServices{
         if (tweetRequestDto.getContent() != null){
             throw new BadRequestException("Can't post empty tweet");
         }
-        User author = getUserWithCreds(credentialsMapper.dtoToEntity(tweetRequestDto.getCredentials()));
+        User author = getUserWithCreds(credentialsMapper.dtoToEntities(tweetRequestDto.getCredentials()));
 
         Tweet tweet = tweetMapper.dtoToEntity(tweetRequestDto);
 
@@ -200,8 +229,33 @@ public class TweetServicesImpl implements TweetServices{
     }
 
     @Override
-    public TweetResponseDto replyToTweet(Long id) {
-        return null;
+    public TweetResponseDto replyToTweet(Long id, TweetRequestDto tweetRequestDto) {
+        if (tweetRequestDto.getCredentials() != null){
+            throw new NotAuthorizedException("Log in to tweet");
+        }
+
+        if (tweetRequestDto.getContent() != null){
+            throw new BadRequestException("Can't post empty tweet");
+        }
+        User author = getUserWithCreds(credentialsMapper.dtoToEntities(tweetRequestDto.getCredentials()));
+
+        Tweet tweet = tweetMapper.dtoToEntity(tweetRequestDto);
+
+        author.getTweets().add(tweet);
+
+        userRepository.saveAndFlush(author);
+
+        tweet.setAuthor(author);
+
+        tweet.setInReplyTo(getTweetById(id));
+
+        tweetRepository.saveAndFlush(tweet);
+
+        tweet.setHashtags(hashtagFinder(tweet));
+
+        tweet.setMentions(mentionFinder(tweet));
+
+        return tweetMapper.entityToDto(tweetRepository.saveAndFlush(tweet));
 
     }
 
@@ -219,8 +273,19 @@ public class TweetServicesImpl implements TweetServices{
     }
 
     @Override
-    public TweetResponseDto repostTweet(Long id) {
-        return null;
+    public TweetResponseDto repostTweet(Long id, CredentialsDto credentialsDto) {
+        User user = getUserWithCreds(credentialsMapper.dtoToEntities(credentialsDto));
+        Tweet repostee = getTweetById(id);
+        Tweet newTweet = new Tweet();
+        newTweet.setAuthor(user);
+        newTweet.setRepostOf(repostee);
+
+        repostee.getRepostsOf().add(newTweet);
+        //save and flush both tweets
+        tweetRepository.saveAndFlush(repostee);
+        tweetRepository.saveAndFlush(newTweet);
+        return tweetMapper.entityToDto(newTweet);
+
     }
 
     @Override

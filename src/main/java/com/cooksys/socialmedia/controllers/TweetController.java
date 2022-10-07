@@ -54,8 +54,8 @@ public class TweetController {
     }
 
     //@PostMapping("/{id}/reply") //reply to tweet with given id (server creates inReplyTo relationship
-    public TweetResponseDto replyToTweet (@PathVariable Long id) {
-        return tweetServices.replyToTweet(id);
+    public TweetResponseDto replyToTweet (@PathVariable Long id, @RequestBody TweetRequestDto tweetRequestDto) {
+        return tweetServices.replyToTweet(id, tweetRequestDto);
 
     }
     //@GetMapping("/{id}/replies") // retrieves the direct replies to the tweet with the given id
@@ -64,8 +64,8 @@ public class TweetController {
     }
 
     //@PostMapping("/{id}/repost") //creates a repost tweet with given id (server creates repostOf property)
-    public TweetResponseDto repostTweet (@PathVariable Long id) {
-        return tweetServices.repostTweet(id);
+    public TweetResponseDto repostTweet (@PathVariable Long id, @RequestBody CredentialsDto credentialsDto) {
+        return tweetServices.repostTweet(id, credentialsDto);
 
     }
 

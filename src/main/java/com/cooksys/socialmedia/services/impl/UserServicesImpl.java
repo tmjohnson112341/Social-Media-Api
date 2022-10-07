@@ -1,8 +1,10 @@
 package com.cooksys.socialmedia.services.impl;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
+import com.cooksys.socialmedia.repositories.TweetRepository;
 import org.springframework.stereotype.Service;
 
 import com.cooksys.socialmedia.dtos.CredentialsDto;
@@ -34,6 +36,7 @@ public class UserServicesImpl implements UserServices{
     private final TweetMapper tweetMapper;
     private final CredentialsMapper credentialsMapper;
     private final ProfileMapper profileMapper;
+	TweetRepository tweetRepository;
 
     
     private User findUser(String username) {
@@ -66,11 +69,30 @@ public class UserServicesImpl implements UserServices{
         if (createdUser.getCredentials() == null ||
                 createdUser.getCredentials().getPassword() == null ||
                 createdUser.getCredentials().getUsername() == null) {
-            throw new BadRequestException("A username and password are required");
+            throw new BadRequestException("Username and password are required");
         }
+		Optional <User> oldUser = userRepository.findByCredentialsUsername(createdUser.getCredentials().getUsername());
+		if (oldUser.isPresent()){
+			if (!oldUser.get().isDeleted()) {
+				throw new BadRequestException("That account already exists");
+			}
+			//individually, user and pw from olduser must equal user and pw from createduser
+			else if (Objects.equals(oldUser.get().getCredentials().getUsername(), createdUser.getCredentials().getUsername()) &&
+						oldUser.get().getCredentials().getPassword().equals(createdUser.getCredentials().getPassword()))
+			{
+				oldUser.get().setDeleted(false);
+				createdUser = oldUser.get();
+				for (Tweet tweet : createdUser.getTweets()) {
+					tweet.setDeleted(false);
+				}
+				tweetRepository.saveAllAndFlush(createdUser.getTweets());
+			}
+		}
 
-        userRepository.saveAndFlush(createdUser);
-        return userMapper.entityToDto(createdUser);
+
+
+		userRepository.saveAndFlush(createdUser);
+		return userMapper.entityToDto(createdUser);
 
     }
     

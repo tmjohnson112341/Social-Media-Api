@@ -28,7 +28,7 @@ public interface TweetServices {
 
     List<HashtagDto> getTag(Long id);
 
-    TweetResponseDto getContext(Long id);
+    ContextDto getContext(Long id);
 
     List <TweetResponseDto> getReposts(Long id);
 

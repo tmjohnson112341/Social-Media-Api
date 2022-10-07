@@ -4,6 +4,7 @@ import com.cooksys.socialmedia.dtos.CredentialsDto;
 import com.cooksys.socialmedia.dtos.ProfileDto;
 import com.cooksys.socialmedia.dtos.UserRequestDto;
 import com.cooksys.socialmedia.dtos.UserResponseDto;
+import com.cooksys.socialmedia.entities.User;
 import com.cooksys.socialmedia.mappers.UserMapper;
 import com.cooksys.socialmedia.services.UserServices;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,9 @@ public class UserController {
     }
 //
 //    @PatchMapping("/@{username}") //updates profile username
+    public UserResponseDto changeUsername (@PathVariable UserRequestDto userRequestDto, String username){
+        return userServices.changeUsername(username);
+    }
 //
 //    @DeleteMapping("/@{username}") //deletes given username
 //

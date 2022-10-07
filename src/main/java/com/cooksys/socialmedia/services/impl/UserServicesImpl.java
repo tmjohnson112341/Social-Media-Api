@@ -67,7 +67,12 @@ public class UserServicesImpl implements UserServices{
         return null;
     }
 
-
+    @Override
+    public UserResponseDto changeUsername(String username) {
+        getUser(username);
+        getUser(user).setUsername()
+        return null;
+    }
 
 
 }

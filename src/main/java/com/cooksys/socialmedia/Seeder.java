@@ -236,7 +236,7 @@ public class Seeder implements CommandLineRunner {
         // ----- List of Liked Tweets -----
         user1.setLikedTweets(user1Tweets);
         userRepository.saveAndFlush(user1);
-        
+
         user2.setLikedTweets(user2Tweets);
         userRepository.saveAndFlush(user2);
 
@@ -254,18 +254,18 @@ public class Seeder implements CommandLineRunner {
         user1.setFollowers(followersList);
         userRepository.saveAndFlush(user1);
 
-//        // ----- Tweet Mentions -----
-//        Tweet mention1 = new Tweet();
-//        mention1.setAuthor(user2);
-//        mention1.setDeleted(false);
-//        mention1.set
-//        // Set Content @PARAM String
-//        mention1.setContent("This is some content for tweet mention 1");
-//        System.out.println(mention1.getAuthor());
-//        tweetRepository.saveAndFlush(mention1);
-////
+        // ----- Tweet Mentions -----
+        Tweet mention1 = new Tweet();
+        mention1.setAuthor(user2);
+        mention1.setDeleted(false);
+
+        // Set Content @PARAM String
+        mention1.setContent("This is some content for tweet mention 1");
+
+        tweetRepository.saveAndFlush(mention1);
+//
 //         Following
-        
+
         List<User> following_1 = List.of(user2, user3, user4, deletedUser);
         user1.setFollowing(following_1);
 

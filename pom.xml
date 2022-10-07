@@ -95,11 +95,6 @@
 							<version>0.2.0</version>
 						</dependency>
 					</annotationProcessorPaths>
-					<compilerArgs>
-						<compilerArg>
-							-MapStruct.defaultComponentModel=spring
-						</compilerArg>
-					</compilerArgs>
 				</configuration>
 			</plugin>
 		</plugins>

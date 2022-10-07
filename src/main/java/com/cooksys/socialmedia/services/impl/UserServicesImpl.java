@@ -1,9 +1,11 @@
 package com.cooksys.socialmedia.services.impl;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.cooksys.socialmedia.repositories.TweetRepository;
 import org.springframework.stereotype.Service;
 
 import com.cooksys.socialmedia.dtos.CredentialsDto;
@@ -14,6 +16,7 @@ import com.cooksys.socialmedia.entities.Credentials;
 import com.cooksys.socialmedia.entities.Profile;
 import com.cooksys.socialmedia.entities.Tweet;
 import com.cooksys.socialmedia.entities.User;
+import com.cooksys.socialmedia.exceptions.BadRequestException;
 import com.cooksys.socialmedia.exceptions.NotAuthorizedException;
 import com.cooksys.socialmedia.exceptions.NotFoundException;
 import com.cooksys.socialmedia.mappers.CredentialsMapper;
@@ -34,6 +37,7 @@ public class UserServicesImpl implements UserServices{
     private final TweetMapper tweetMapper;
     private final CredentialsMapper credentialsMapper;
     private final ProfileMapper profileMapper;
+	TweetRepository tweetRepository;
 
     
     private User findUser(String username) {
@@ -53,17 +57,43 @@ public class UserServicesImpl implements UserServices{
 
     @Override
     public UserResponseDto createNewUser(UserRequestDto userRequestDto) {
-        User createdUser = new User();
-        Credentials newCreds = credentialsMapper.dtoToEntities(userRequestDto.getCredentials());
-        Profile newProfile = profileMapper.dtoToEntities(userRequestDto.getProfile());
-        System.out.print(newProfile);
-        System.out.print(newCreds);
+        if (userRequestDto == null) {
+            throw new BadRequestException("There is nothing here");
+        }
 
-        createdUser.setCredentials(newCreds);
-        createdUser.setProfile(newProfile);
+        User createdUser = userMapper.dtoToEntity(userRequestDto);
 
-        userRepository.saveAndFlush(createdUser);
-        return userMapper.entityToDto(createdUser);
+        if (createdUser.getProfile() == null || createdUser.getProfile().getEmail() == null) {
+            throw new BadRequestException("You don't exist");
+        }
+
+        if (createdUser.getCredentials() == null ||
+                createdUser.getCredentials().getPassword() == null ||
+                createdUser.getCredentials().getUsername() == null) {
+            throw new BadRequestException("Username and password are required");
+        }
+		Optional <User> oldUser = userRepository.findByCredentialsUsername(createdUser.getCredentials().getUsername());
+		if (oldUser.isPresent()){
+			if (!oldUser.get().isDeleted()) {
+				throw new BadRequestException("That account already exists");
+			}
+			//individually, user and pw from olduser must equal user and pw from createduser
+			else if (Objects.equals(oldUser.get().getCredentials().getUsername(), createdUser.getCredentials().getUsername()) &&
+						oldUser.get().getCredentials().getPassword().equals(createdUser.getCredentials().getPassword()))
+			{
+				oldUser.get().setDeleted(false);
+				createdUser = oldUser.get();
+				for (Tweet tweet : createdUser.getTweets()) {
+					tweet.setDeleted(false);
+				}
+				tweetRepository.saveAllAndFlush(createdUser.getTweets());
+			}
+		}
+
+
+
+		userRepository.saveAndFlush(createdUser);
+		return userMapper.entityToDto(createdUser);
 
     }
     

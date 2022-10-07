@@ -40,7 +40,7 @@ public class UserServicesImpl implements UserServices{
 
     
     private User findUser(String username) {
-        Optional<User> optionalUser = userRepository.findByCredentialsUsernameAndDeletedFalse(username);
+        Optional<User> optionalUser = userRepository.findByCredentialsUsername(username);
         if (optionalUser.isEmpty()) {
             throw new NotFoundException("the user by the name " + username + " does not exist.");
         } else {
@@ -99,7 +99,7 @@ public class UserServicesImpl implements UserServices{
 			userRepository.saveAndFlush(userToDelete);
 			return userMapper.entityToDto(userToDelete);
 		} else {
-			throw new NotAuthorizedException("Username: " + username + "not found with these credentials");
+			throw new NotAuthorizedException("Username: " + username + " not found with these credentials");
 		}
 	}
 
@@ -146,8 +146,6 @@ public class UserServicesImpl implements UserServices{
 		User usersFollowing = findUser(username);
 		return userMapper.entitiesToDtos(usersFollowing.getFollowing());
 	}
-
-
 
 
 }

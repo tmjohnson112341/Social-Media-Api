@@ -2,11 +2,13 @@ package com.cooksys.socialmedia.services.impl;
 
 import com.cooksys.socialmedia.dtos.CredentialsDto;
 import com.cooksys.socialmedia.dtos.ProfileDto;
+import com.cooksys.socialmedia.dtos.TweetResponseDto;
 import com.cooksys.socialmedia.dtos.UserRequestDto;
 import com.cooksys.socialmedia.dtos.UserResponseDto;
 import com.cooksys.socialmedia.entities.Credentials;
 import com.cooksys.socialmedia.entities.Profile;
 import com.cooksys.socialmedia.entities.User;
+import com.cooksys.socialmedia.exceptions.NotFoundException;
 import com.cooksys.socialmedia.mappers.CredentialsMapper;
 import com.cooksys.socialmedia.mappers.ProfileMapper;
 import com.cooksys.socialmedia.mappers.UserMapper;
@@ -20,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +33,15 @@ public class UserServicesImpl implements UserServices{
     private final CredentialsMapper credentialsMapper;
     private final ProfileMapper profileMapper;
 
+    
+    private User findUser(String username) {
+        Optional<User> optionalUser = userRepository.findByCredentialsUsername(username);
+        if (optionalUser.isEmpty()) {
+            throw new NotFoundException("the user by the name " + username + " does not exist.");
+        } else {
+            return optionalUser.get();
+        }
+    }
 
     @Override
     public List<UserResponseDto> getAllUsers() {
@@ -51,7 +63,8 @@ public class UserServicesImpl implements UserServices{
         return userMapper.entityToDto(createdUser);
 
     }
-
+    
+    
     @Override
     public UserResponseDto getUser(String username) {
         User user1 = new User();
@@ -66,6 +79,60 @@ public class UserServicesImpl implements UserServices{
         }
         return null;
     }
+
+	@Override
+	public UserResponseDto patchUser(UserRequestDto userRequestDto, String username) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public UserResponseDto deleteUser(CredentialsDto credentialsDto, String username) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void followUser(CredentialsDto credentialsDto, String username) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void unfollowUser(CredentialsDto credentialsDto, String username) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<TweetResponseDto> userFeed(String username) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<TweetResponseDto> getTweetsByUser(String username) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<TweetResponseDto> userMentions(String username) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<UserResponseDto> userFollowers(String username) {
+		User usersFollowers = findUser(username);
+		return userMapper.entitiesToDtos(usersFollowers.getFollowers());
+	}
+
+	@Override
+	public List<UserResponseDto> userFollowing(String username) {
+		User usersFollowing = findUser(username);
+		return userMapper.entitiesToDtos(usersFollowing.getFollowing());
+	}
 
 
 

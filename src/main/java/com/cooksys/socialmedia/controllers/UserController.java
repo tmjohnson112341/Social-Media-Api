@@ -16,6 +16,7 @@ import com.cooksys.socialmedia.dtos.CredentialsDto;
 import com.cooksys.socialmedia.dtos.TweetResponseDto;
 import com.cooksys.socialmedia.dtos.UserRequestDto;
 import com.cooksys.socialmedia.dtos.UserResponseDto;
+import com.cooksys.socialmedia.entities.User;
 import com.cooksys.socialmedia.mappers.UserMapper;
 import com.cooksys.socialmedia.services.UserServices;
 
@@ -48,9 +49,9 @@ public class UserController {
     }
 //
 //    @PatchMapping("/@{username}") //updates profile username
-    @PatchMapping("/@{username}")
-    public UserResponseDto patchUser(@RequestBody UserRequestDto userRequestDto, @PathVariable String username) {
-    	return userServices.patchUser(userRequestDto, username);
+
+    public UserResponseDto changeUsername (@PathVariable UserRequestDto userRequestDto, String username){
+        return userServices.changeUsername(username);
     }
 //
 //    @DeleteMapping("/@{username}") //deletes given username

@@ -75,8 +75,9 @@ public class TweetServicesImpl implements TweetServices{
             }
         }
         List <Hashtag> cookedHashtags = new ArrayList<>();
+        Optional<Hashtag> hashtagValidation;
         for (int i = 0; i < rawHashtags.size(); i++){
-            Optional<Hashtag> hashtagValidation = hashtagRepository.findByLabel(rawHashtags.get(i));
+            hashtagValidation = hashtagRepository.findByLabel(rawHashtags.get(i));
             if (hashtagValidation.isPresent()){
                 Hashtag h = hashtagValidation.get();
                 h.setLastUsed(Timestamp.valueOf(LocalDateTime.now()));

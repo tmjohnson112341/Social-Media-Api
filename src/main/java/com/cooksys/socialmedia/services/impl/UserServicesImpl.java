@@ -73,6 +73,13 @@ public class UserServicesImpl implements UserServices{
     	return userMapper.entityToDto(userToGet);
     }
 
+
+    @Override
+    public UserResponseDto changeUsername(String username) {
+        getUser(username);
+        return null;
+    }
+
 	@Override
 	public UserResponseDto patchUser(UserRequestDto userRequestDto, String username) {
 		User userToPatch = findUser(username);
@@ -134,6 +141,7 @@ public class UserServicesImpl implements UserServices{
 		User usersFollowing = findUser(username);
 		return userMapper.entitiesToDtos(usersFollowing.getFollowing());
 	}
+
 
 
 }

@@ -9,6 +9,7 @@ import com.cooksys.socialmedia.entities.Credentials;
 import com.cooksys.socialmedia.entities.Profile;
 import com.cooksys.socialmedia.entities.Tweet;
 import com.cooksys.socialmedia.entities.User;
+import com.cooksys.socialmedia.exceptions.BadRequestException;
 import com.cooksys.socialmedia.exceptions.NotAuthorizedException;
 import com.cooksys.socialmedia.exceptions.NotFoundException;
 import com.cooksys.socialmedia.mappers.CredentialsMapper;
@@ -55,14 +56,21 @@ public class UserServicesImpl implements UserServices{
 
     @Override
     public UserResponseDto createNewUser(UserRequestDto userRequestDto) {
-        User createdUser = new User();
-        Credentials newCreds = credentialsMapper.dtoToEntities(userRequestDto.getCredentials());
-        Profile newProfile = profileMapper.dtoToEntities(userRequestDto.getProfile());
-        System.out.print(newProfile);
-        System.out.print(newCreds);
+        if (userRequestDto == null) {
+            throw new BadRequestException("There is nothing here");
+        }
 
-        createdUser.setCredentials(newCreds);
-        createdUser.setProfile(newProfile);
+        User createdUser = userMapper.dtoToEntity(userRequestDto);
+
+        if (createdUser.getProfile() == null || createdUser.getProfile().getEmail() == null) {
+            throw new BadRequestException("You don't exist");
+        }
+
+        if (createdUser.getCredentials() == null ||
+                createdUser.getCredentials().getPassword() == null ||
+                createdUser.getCredentials().getUsername() == null) {
+            throw new BadRequestException("A username and password are required");
+        }
 
         userRepository.saveAndFlush(createdUser);
         return userMapper.entityToDto(createdUser);

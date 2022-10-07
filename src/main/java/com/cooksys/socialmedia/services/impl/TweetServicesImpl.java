@@ -115,10 +115,11 @@ public class TweetServicesImpl implements TweetServices{
         Tweet blank = tweet;
         List<Tweet> rawChain = new ArrayList<>();
         while (blank.getInReplyTo() != null){
+            blank = blank.getInReplyTo();
             if (!blank.isDeleted()) {
                 rawChain.add(blank);
             }
-            blank = blank.getInReplyTo();
+
         }
         return rawChain;
     }
@@ -126,8 +127,7 @@ public class TweetServicesImpl implements TweetServices{
     private List<Tweet> afterChain (Tweet tweet){
        Tweet blank = tweet;
        List<Tweet> rawChain = new ArrayList<>();
-       Queue<Tweet> tweetQ = new LinkedList<>();
-       tweetQ.addAll(tweet.getReplies());
+        Queue<Tweet> tweetQ = new LinkedList<>(tweet.getReplies());
        while (!tweetQ.isEmpty()) {
            blank = tweetQ.poll();
            if (!blank.isDeleted()){

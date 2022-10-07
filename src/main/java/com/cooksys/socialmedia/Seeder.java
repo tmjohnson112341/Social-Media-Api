@@ -263,6 +263,17 @@ public class Seeder implements CommandLineRunner {
         mention1.setContent("This is some content for tweet mention 1");
 
         tweetRepository.saveAndFlush(mention1);
+
+//        // ----- Tweet Mentions -----
+//        List<User> users = List.of(user3, user5);
+//        Tweet mention1 = new Tweet();
+//        mention1.setAuthor(user2);
+//        mention1.setDeleted(false);
+//        mention1.setMentions(users);
+//        // Set Content @PARAM String
+//        mention1.setContent("This is some content for tweet mention 1");
+//        tweetRepository.saveAndFlush(mention1);
+
 //
 //         Following
 

@@ -1,7 +1,6 @@
 package com.cooksys.socialmedia;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 
 import org.springframework.boot.CommandLineRunner;

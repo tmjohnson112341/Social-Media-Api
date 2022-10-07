@@ -1,5 +1,6 @@
 package com.cooksys.socialmedia.mappers;
 
+
 import com.cooksys.socialmedia.dtos.CredentialsDto;
 import com.cooksys.socialmedia.entities.Credentials;
 import org.mapstruct.Mapper;
@@ -8,6 +9,7 @@ import org.mapstruct.Mapper;
 public interface CredentialsMapper {
     CredentialsDto entityToDto (Credentials entity);
 
-    Credentials dtoToEntity (CredentialsDto credentialsDto);
+
+    Credentials dtoToEntities(CredentialsDto credentialsDto);
 
 }

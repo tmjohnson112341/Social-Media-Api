@@ -18,6 +18,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 @Entity
 @NoArgsConstructor
 @Data
@@ -60,8 +61,6 @@ public class User {
 
 	@ManyToMany(mappedBy = "mentions")
 	private List<Tweet> tweetsMentioned;
-
-
 
 
 }

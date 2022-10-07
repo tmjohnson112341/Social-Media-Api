@@ -1,7 +1,11 @@
 package com.cooksys.socialmedia.mappers;
 
+import com.cooksys.socialmedia.dtos.CredentialsDto;
+import com.cooksys.socialmedia.dtos.ProfileDto;
 import com.cooksys.socialmedia.dtos.UserRequestDto;
 import com.cooksys.socialmedia.dtos.UserResponseDto;
+import com.cooksys.socialmedia.entities.Credentials;
+import com.cooksys.socialmedia.entities.Profile;
 import com.cooksys.socialmedia.entities.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -16,5 +20,10 @@ public interface UserMapper {
 
     User dtoToEntity (UserRequestDto userRequestDto);
 
+
+    List<UserResponseDto> entityToDtos(List<User> all);
+
+
     List<UserResponseDto> entitiesToDtos(List<User> livingMentionedUsers);
+
 }

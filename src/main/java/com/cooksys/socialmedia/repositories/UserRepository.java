@@ -15,14 +15,9 @@ import java.util.List;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 	
-	Optional<User>findByCredentialsUsername(String username);
 
-<<<<<<< HEAD
-=======
     Optional<User> findByCredentialsUsername(String name);
 
 
 
-
->>>>>>> 70e21501ed82eebea7cc58de1fed82cf96c93e2e
 }

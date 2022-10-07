@@ -6,6 +6,8 @@ import com.cooksys.socialmedia.entities.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring", uses = { ProfileMapper.class, CredentialsMapper.class })
 public interface UserMapper {
     
@@ -14,4 +16,5 @@ public interface UserMapper {
 
     User dtoToEntity (UserRequestDto userRequestDto);
 
+    List<UserResponseDto> entitiesToDtos(List<User> livingMentionedUsers);
 }

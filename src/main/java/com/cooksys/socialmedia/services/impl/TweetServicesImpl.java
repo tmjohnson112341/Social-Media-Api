@@ -1,15 +1,15 @@
 package com.cooksys.socialmedia.services.impl;
 
-import com.cooksys.socialmedia.dtos.CredentialsDto;
-import com.cooksys.socialmedia.dtos.TweetRequestDto;
-import com.cooksys.socialmedia.dtos.TweetResponseDto;
+import com.cooksys.socialmedia.dtos.*;
 import com.cooksys.socialmedia.entities.Credentials;
 import com.cooksys.socialmedia.entities.Tweet;
 import com.cooksys.socialmedia.entities.User;
 import com.cooksys.socialmedia.exceptions.NotAuthorizedException;
 import com.cooksys.socialmedia.exceptions.NotFoundException;
 import com.cooksys.socialmedia.mappers.CredentialsMapper;
+import com.cooksys.socialmedia.mappers.HashtagMapper;
 import com.cooksys.socialmedia.mappers.TweetMapper;
+import com.cooksys.socialmedia.mappers.UserMapper;
 import com.cooksys.socialmedia.repositories.TweetRepository;
 import com.cooksys.socialmedia.repositories.UserRepository;
 import org.springframework.stereotype.Service;
@@ -31,6 +31,10 @@ public class TweetServicesImpl implements TweetServices{
 
     private CredentialsMapper credentialsMapper;
 
+    private HashtagMapper hashtagMapper;
+
+    private UserMapper userMapper;
+
     private User getUserWithCreds (Credentials credentials) {
         Optional<User> optionalUser = userRepository.findByCredentialsUsername(credentials.getUsername());
         if (optionalUser.isEmpty() || optionalUser.get().isDeleted()) {
@@ -47,7 +51,7 @@ public class TweetServicesImpl implements TweetServices{
     private Tweet getTweetById(Long id) {
         Optional<Tweet> optionalTweet = tweetRepository.findById(id);
         if (optionalTweet.isEmpty() || optionalTweet.get().isDeleted()) {
-            throw new NotFoundException("That tweet doesn't exist");
+            throw new NotFoundException("That tweet no longer exists");
         }
         return optionalTweet.orElse(null);
     }
@@ -100,9 +104,34 @@ public class TweetServicesImpl implements TweetServices{
     }
 
     @Override
+    public List<UserResponseDto> likedByUsers(Long id){
+        Tweet tweet = getTweetById(id);
+        List<User> livingTweetLikers = new ArrayList<>();
+        for (User i : tweet.getLikes()) {
+            if (!i.isDeleted()){
+                livingTweetLikers.add(i);
+            }
+        }
+        return userMapper.entitiesToDtos(livingTweetLikers);
+    }
+
+    @Override
     public TweetResponseDto replyToTweet(Long id) {
         return null;
 
+    }
+
+    @Override
+    public List<TweetResponseDto> getReplies(Long id) {
+        Tweet tweet = getTweetById(id);
+        List<Tweet> rawReplies = tweet.getReplies();
+        List<Tweet> livingReplies = new ArrayList<>();
+        for (Tweet i : rawReplies){
+            if (!i.isDeleted()){
+                livingReplies.add(i);
+            }
+        }
+        return tweetMapper.entitiesToDtos(livingReplies);
     }
 
     @Override
@@ -111,8 +140,11 @@ public class TweetServicesImpl implements TweetServices{
     }
 
     @Override
-    public TweetResponseDto getTag (Long id) {
-        return null;
+    public List<HashtagDto> getTag (Long id) {
+
+        Tweet tweet = getTweetById(id);
+
+        return hashtagMapper.entitiesToDtos(tweet.getHashtags());
     }
 
     @Override
@@ -121,14 +153,32 @@ public class TweetServicesImpl implements TweetServices{
     }
 
     @Override
-    public TweetResponseDto getReposts(Long id) {
-        return null;
+    public List<TweetResponseDto> getReposts(Long id) {
+        Tweet tweet = getTweetById(id);
+        List <Tweet> rawReposts = tweet.getRepostsOf();
+        List <Tweet> livingReposts = new ArrayList<>();
+        for (Tweet i : rawReposts) {
+            if (!i.isDeleted()){
+                livingReposts.add(i);
+            }
+        }
+        return tweetMapper.entitiesToDtos(livingReposts);
 
     }
 
     @Override
-    public TweetResponseDto getMentions(Long id) {
-        return null;
+    public List<UserResponseDto> getMentions(Long id) {
+        Tweet tweet = getTweetById(id);
+
+       List<User> mentionedUsers = tweet.getMentions();
+       List<User> livingMentionedUsers = new ArrayList<>();
+       for (User i : mentionedUsers)  {
+           if (!i.isDeleted()){
+               livingMentionedUsers.add(i);
+           }
+       }
+       return userMapper.entitiesToDtos(livingMentionedUsers);
+
     }
 
 

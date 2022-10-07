@@ -20,7 +20,10 @@ public interface UserMapper {
 
     User dtoToEntity (UserRequestDto userRequestDto);
 
+
     List<UserResponseDto> entityToDtos(List<User> all);
 
+
+    List<UserResponseDto> entitiesToDtos(List<User> livingMentionedUsers);
 
 }

@@ -40,9 +40,4 @@ public class ValidateController {
     	return validateServices.validateUsernameAvailable(username);
     }
 
-
-
-
-
-
 }

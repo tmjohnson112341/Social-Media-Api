@@ -1,7 +1,11 @@
 package com.cooksys.socialmedia.services.impl;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
 import com.cooksys.socialmedia.dtos.CredentialsDto;
-import com.cooksys.socialmedia.dtos.ProfileDto;
 import com.cooksys.socialmedia.dtos.TweetResponseDto;
 import com.cooksys.socialmedia.dtos.UserRequestDto;
 import com.cooksys.socialmedia.dtos.UserResponseDto;
@@ -16,17 +20,9 @@ import com.cooksys.socialmedia.mappers.ProfileMapper;
 import com.cooksys.socialmedia.mappers.TweetMapper;
 import com.cooksys.socialmedia.mappers.UserMapper;
 import com.cooksys.socialmedia.repositories.UserRepository;
-import org.springframework.stereotype.Service;
-
 import com.cooksys.socialmedia.services.UserServices;
 
 import lombok.RequiredArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +46,8 @@ public class UserServicesImpl implements UserServices{
 
     @Override
     public List<UserResponseDto> getAllUsers() {
-        return userMapper.entityToDtos(userRepository.findAll());
+    	List<User> allUsers = userRepository.findUsersByDeletedFalse();
+        return userMapper.entityToDtos(allUsers);
     }
 
     @Override
@@ -72,22 +69,13 @@ public class UserServicesImpl implements UserServices{
     
     @Override
     public UserResponseDto getUser(String username) {
-        User user1 = new User();
-
-        for (User user: userRepository.findAll()){
-            user1.setCredentials(user.getCredentials());
-            user1.setProfile(user.getProfile());
-            user1.setJoined(user.getJoined());
-            if (user1.getCredentials().getUsername().equals(username)) {
-                return userMapper.entityToDto(user1);
-            }
-        }
-        return null;
+    	User userToGet = findUser(username);
+    	return userMapper.entityToDto(userToGet);
     }
 
 	@Override
 	public UserResponseDto patchUser(UserRequestDto userRequestDto, String username) {
-		// TODO Auto-generated method stub
+		User userToPatch = findUser(username);
 		return null;
 	}
 

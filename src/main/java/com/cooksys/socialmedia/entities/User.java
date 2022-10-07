@@ -1,6 +1,7 @@
 package com.cooksys.socialmedia.entities;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Embedded;
@@ -14,9 +15,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-
 
 @Entity
 @NoArgsConstructor
@@ -59,7 +60,8 @@ public class User {
 	private List<Tweet> likedTweets;
 
 	@ManyToMany(mappedBy = "mentions")
-	private List<Tweet> tweetsMentioned;
+	@EqualsAndHashCode.Exclude
+	private List<Tweet> tweetsMentioned = new ArrayList<>();
 
 
 }

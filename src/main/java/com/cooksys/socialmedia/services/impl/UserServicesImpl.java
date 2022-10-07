@@ -7,10 +7,13 @@ import com.cooksys.socialmedia.dtos.UserRequestDto;
 import com.cooksys.socialmedia.dtos.UserResponseDto;
 import com.cooksys.socialmedia.entities.Credentials;
 import com.cooksys.socialmedia.entities.Profile;
+import com.cooksys.socialmedia.entities.Tweet;
 import com.cooksys.socialmedia.entities.User;
+import com.cooksys.socialmedia.exceptions.NotAuthorizedException;
 import com.cooksys.socialmedia.exceptions.NotFoundException;
 import com.cooksys.socialmedia.mappers.CredentialsMapper;
 import com.cooksys.socialmedia.mappers.ProfileMapper;
+import com.cooksys.socialmedia.mappers.TweetMapper;
 import com.cooksys.socialmedia.mappers.UserMapper;
 import com.cooksys.socialmedia.repositories.UserRepository;
 import org.springframework.stereotype.Service;
@@ -20,6 +23,7 @@ import com.cooksys.socialmedia.services.UserServices;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -30,12 +34,13 @@ public class UserServicesImpl implements UserServices{
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final TweetMapper tweetMapper;
     private final CredentialsMapper credentialsMapper;
     private final ProfileMapper profileMapper;
 
     
     private User findUser(String username) {
-        Optional<User> optionalUser = userRepository.findByCredentialsUsername(username);
+        Optional<User> optionalUser = userRepository.findByCredentialsUsernameAndDeletedFalse(username);
         if (optionalUser.isEmpty()) {
             throw new NotFoundException("the user by the name " + username + " does not exist.");
         } else {
@@ -88,8 +93,14 @@ public class UserServicesImpl implements UserServices{
 
 	@Override
 	public UserResponseDto deleteUser(CredentialsDto credentialsDto, String username) {
-		// TODO Auto-generated method stub
-		return null;
+		User userToDelete = findUser(username);
+		if (userToDelete.getCredentials().equals(credentialsMapper.dtoToEntities(credentialsDto))) {
+			userToDelete.setDeleted(true);
+			userRepository.saveAndFlush(userToDelete);
+			return userMapper.entityToDto(userToDelete);
+		} else {
+			throw new NotAuthorizedException("Username: " + username + "not found with these credentials");
+		}
 	}
 
 	@Override
@@ -112,14 +123,16 @@ public class UserServicesImpl implements UserServices{
 
 	@Override
 	public List<TweetResponseDto> getTweetsByUser(String username) {
-		// TODO Auto-generated method stub
-		return null;
+		User userTweets = findUser(username);
+		List<Tweet> tweets = userTweets.getTweets();
+		return tweetMapper.entitiesToDtos(tweets);
 	}
 
 	@Override
 	public List<TweetResponseDto> userMentions(String username) {
-		// TODO Auto-generated method stub
-		return null;
+		User userMentions = findUser(username);
+		List<Tweet> tweets = userMentions.getTweetsMentioned();
+		return tweetMapper.entitiesToDtos(tweets);
 	}
 
 	@Override

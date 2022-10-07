@@ -255,15 +255,15 @@ public class Seeder implements CommandLineRunner {
         userRepository.saveAndFlush(user1);
 
 //        // ----- Tweet Mentions -----
+//        List<User> users = List.of(user3, user5);
 //        Tweet mention1 = new Tweet();
 //        mention1.setAuthor(user2);
 //        mention1.setDeleted(false);
-//        mention1.set
+//        mention1.setMentions(users);
 //        // Set Content @PARAM String
 //        mention1.setContent("This is some content for tweet mention 1");
-//        System.out.println(mention1.getAuthor());
 //        tweetRepository.saveAndFlush(mention1);
-////
+//
 //         Following
         
         List<User> following_1 = List.of(user2, user3, user4, deletedUser);

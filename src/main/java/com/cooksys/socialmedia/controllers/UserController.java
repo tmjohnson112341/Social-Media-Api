@@ -34,7 +34,10 @@ public class UserController {
         return userServices.createNewUser(userRequestDto);
     }
 //
-//    @GetMapping("/@{username}") //retrieves user of given username
+    @GetMapping("/@{username}") //retrieves user of given username
+    public UserResponseDto getUser(@PathVariable String username){
+        return userServices.getUser(username);
+    }
 //
 //    @PatchMapping("/@{username}") //updates profile username
 //

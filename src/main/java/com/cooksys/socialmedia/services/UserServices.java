@@ -14,4 +14,6 @@ public interface UserServices {
 
 
     UserResponseDto createNewUser(UserRequestDto userRequestDto);
+
+    UserResponseDto getUser(String username);
 }

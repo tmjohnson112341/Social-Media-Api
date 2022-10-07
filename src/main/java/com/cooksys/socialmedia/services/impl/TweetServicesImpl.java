@@ -177,7 +177,7 @@ public class TweetServicesImpl implements TweetServices{
     @Override
     public TweetResponseDto likeTweet(Long id, CredentialsDto credentialsDto) {
         Tweet tweet = getTweetById(id);
-        User user = getUserWithCreds(credentialsMapper.dtoToEntity(credentialsDto));
+        User user = getUserWithCreds(credentialsMapper.dtoToEntities(credentialsDto));
         tweet.getLikes().add(user);
         tweetRepository.saveAndFlush(tweet);
 

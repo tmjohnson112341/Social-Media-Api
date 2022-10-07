@@ -9,6 +9,7 @@ import org.mapstruct.Mapper;
 public interface CredentialsMapper {
     CredentialsDto entityToDto (Credentials entity);
 
-    Credentials dtoToEntity (CredentialsDto credentialsDto);
+
+    Credentials dtoToEntities(CredentialsDto credentialsDto);
 
 }

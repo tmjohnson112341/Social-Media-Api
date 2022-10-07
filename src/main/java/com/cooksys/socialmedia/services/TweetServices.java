@@ -20,15 +20,15 @@ public interface TweetServices {
 
     List<UserResponseDto> likedByUsers(Long id);
 
-    TweetResponseDto replyToTweet(Long id);
+    TweetResponseDto replyToTweet(Long id, TweetRequestDto tweetRequestDto);
 
     List<TweetResponseDto> getReplies(Long id);
 
-    TweetResponseDto repostTweet(Long id);
+    TweetResponseDto repostTweet(Long id, CredentialsDto credentialsDto);
 
     List<HashtagDto> getTag(Long id);
 
-    TweetResponseDto getContext(Long id);
+    ContextDto getContext(Long id);
 
     List <TweetResponseDto> getReposts(Long id);
 

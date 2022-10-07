@@ -2,14 +2,17 @@ package com.cooksys.socialmedia.services.impl;
 
 import com.cooksys.socialmedia.dtos.*;
 import com.cooksys.socialmedia.entities.Credentials;
+import com.cooksys.socialmedia.entities.Hashtag;
 import com.cooksys.socialmedia.entities.Tweet;
 import com.cooksys.socialmedia.entities.User;
+import com.cooksys.socialmedia.exceptions.BadRequestException;
 import com.cooksys.socialmedia.exceptions.NotAuthorizedException;
 import com.cooksys.socialmedia.exceptions.NotFoundException;
 import com.cooksys.socialmedia.mappers.CredentialsMapper;
 import com.cooksys.socialmedia.mappers.HashtagMapper;
 import com.cooksys.socialmedia.mappers.TweetMapper;
 import com.cooksys.socialmedia.mappers.UserMapper;
+import com.cooksys.socialmedia.repositories.HashTagRepository;
 import com.cooksys.socialmedia.repositories.TweetRepository;
 import com.cooksys.socialmedia.repositories.UserRepository;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,9 @@ import com.cooksys.socialmedia.services.TweetServices;
 
 import lombok.RequiredArgsConstructor;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -33,6 +39,8 @@ public class TweetServicesImpl implements TweetServices{
 
     private HashtagMapper hashtagMapper;
 
+    private HashTagRepository hashtagRepository;
+
     private UserMapper userMapper;
 
     private User getUserWithCreds (Credentials credentials) {
@@ -45,6 +53,88 @@ public class TweetServicesImpl implements TweetServices{
             throw new NotAuthorizedException("Incorrect password!");
         }
         return optionalUser.get();
+    }
+
+    private List<Hashtag> hashtagFinder (Tweet tweet) {
+        String[] searcher = tweet.getContent().split("\\s+");
+        List <String> rawHashtags = new ArrayList<>();
+        for (int i = 0; i < searcher.length; i++) {
+            if (searcher[i].startsWith("#")) {
+
+            rawHashtags.add(searcher[i].substring(1));
+            }
+        }
+        List <Hashtag> cookedHashtags = new ArrayList<>();
+        for (int i = 0; i < rawHashtags.size(); i++){
+            Optional<Hashtag> hashtagValidation = hashtagRepository.findByLabel(rawHashtags.get(i));
+            if (hashtagValidation.isPresent()){
+                Hashtag h = hashtagValidation.get();
+                h.setLastUsed(Timestamp.valueOf(LocalDateTime.now()));
+                h.getTaggedTweets().add(tweet);
+                hashtagRepository.saveAndFlush(h);
+                cookedHashtags.add(h);
+            }
+            else {
+                Hashtag h = new Hashtag();
+                h.setLabel(rawHashtags.get(i));
+                h.setFirstUsed(Timestamp.valueOf(LocalDateTime.now()));
+                h.setLastUsed(Timestamp.valueOf(LocalDateTime.now()));
+                h.getTaggedTweets().add(tweet);
+                hashtagRepository.saveAndFlush(h);
+                cookedHashtags.add(h);
+            }
+        }
+
+        return cookedHashtags;
+    }
+
+    private List<User> mentionFinder (Tweet tweet) {
+        String[] searcher = tweet.getContent().split("\\s+");
+        List <String> rawMentions = new ArrayList<>();
+        for (int i = 0; i < searcher.length; i++) {
+            if (searcher[i].startsWith("@")) {
+                // check if user exists?
+                rawMentions.add(searcher[i].substring(1));
+            }
+        }
+        List <User> cookedMentions = new ArrayList<>();
+        for (int i = 0; i < rawMentions.size(); i++){
+            Optional<User> mentionValidation = userRepository.findByCredentialsUsername(rawMentions.get(i));
+            if (mentionValidation.isPresent()) {
+                User m = mentionValidation.get();
+                m.getTweetsMentioned().add(tweet);
+                userRepository.saveAndFlush(m);
+                cookedMentions.add(m);
+            }
+        }
+        return cookedMentions;
+    }
+
+    private List<Tweet> beforeChain (Tweet tweet){
+        Tweet blank = tweet;
+        List<Tweet> rawChain = new ArrayList<>();
+        while (blank.getInReplyTo() != null){
+            if (!blank.isDeleted()) {
+                rawChain.add(blank);
+            }
+            blank = blank.getInReplyTo();
+        }
+        return rawChain;
+    }
+
+    private List<Tweet> afterChain (Tweet tweet){
+       Tweet blank = tweet;
+       List<Tweet> rawChain = new ArrayList<>();
+       Queue<Tweet> tweetQ = new LinkedList<>();
+       tweetQ.addAll(tweet.getReplies());
+       while (!tweetQ.isEmpty()) {
+           blank = tweetQ.poll();
+           if (!blank.isDeleted()){
+               rawChain.add(blank);
+           }
+           tweetQ.addAll(blank.getReplies());
+       }
+        return rawChain;
     }
 
 
@@ -73,8 +163,31 @@ public class TweetServicesImpl implements TweetServices{
 
     @Override
     public TweetResponseDto createTweet (TweetRequestDto tweetRequestDto) {
-        Tweet newTweet = tweetMapper.dtoToEntity(tweetRequestDto);
-        return tweetMapper.entityToDto(tweetRepository.saveAndFlush(newTweet));
+        if (tweetRequestDto.getCredentials() != null){
+            throw new NotAuthorizedException("Log in to tweet");
+        }
+
+        if (tweetRequestDto.getContent() != null){
+            throw new BadRequestException("Can't post empty tweet");
+        }
+        User author = getUserWithCreds(credentialsMapper.dtoToEntities(tweetRequestDto.getCredentials()));
+
+        Tweet tweet = tweetMapper.dtoToEntity(tweetRequestDto);
+
+        author.getTweets().add(tweet);
+
+        userRepository.saveAndFlush(author);
+
+        tweet.setAuthor(author);
+
+        tweetRepository.saveAndFlush(tweet);
+
+        tweet.setHashtags(hashtagFinder(tweet));
+
+        tweet.setMentions(mentionFinder(tweet));
+
+        return tweetMapper.entityToDto(tweetRepository.saveAndFlush(tweet));
+
     }
 
     @Override
@@ -116,8 +229,33 @@ public class TweetServicesImpl implements TweetServices{
     }
 
     @Override
-    public TweetResponseDto replyToTweet(Long id) {
-        return null;
+    public TweetResponseDto replyToTweet(Long id, TweetRequestDto tweetRequestDto) {
+        if (tweetRequestDto.getCredentials() != null){
+            throw new NotAuthorizedException("Log in to tweet");
+        }
+
+        if (tweetRequestDto.getContent() != null){
+            throw new BadRequestException("Can't post empty tweet");
+        }
+        User author = getUserWithCreds(credentialsMapper.dtoToEntities(tweetRequestDto.getCredentials()));
+
+        Tweet tweet = tweetMapper.dtoToEntity(tweetRequestDto);
+
+        author.getTweets().add(tweet);
+
+        userRepository.saveAndFlush(author);
+
+        tweet.setAuthor(author);
+
+        tweet.setInReplyTo(getTweetById(id));
+
+        tweetRepository.saveAndFlush(tweet);
+
+        tweet.setHashtags(hashtagFinder(tweet));
+
+        tweet.setMentions(mentionFinder(tweet));
+
+        return tweetMapper.entityToDto(tweetRepository.saveAndFlush(tweet));
 
     }
 
@@ -135,8 +273,19 @@ public class TweetServicesImpl implements TweetServices{
     }
 
     @Override
-    public TweetResponseDto repostTweet(Long id) {
-        return null;
+    public TweetResponseDto repostTweet(Long id, CredentialsDto credentialsDto) {
+        User user = getUserWithCreds(credentialsMapper.dtoToEntities(credentialsDto));
+        Tweet repostee = getTweetById(id);
+        Tweet newTweet = new Tweet();
+        newTweet.setAuthor(user);
+        newTweet.setRepostOf(repostee);
+
+        repostee.getRepostsOf().add(newTweet);
+        //save and flush both tweets
+        tweetRepository.saveAndFlush(repostee);
+        tweetRepository.saveAndFlush(newTweet);
+        return tweetMapper.entityToDto(newTweet);
+
     }
 
     @Override
@@ -148,8 +297,13 @@ public class TweetServicesImpl implements TweetServices{
     }
 
     @Override
-    public TweetResponseDto getContext(Long id) {
-        return null;
+    public ContextDto getContext(Long id) {
+        Tweet tweet = getTweetById(id);
+        ContextDto contextDto = new ContextDto();
+        contextDto.setBefore(tweetMapper.entitiesToDtos(beforeChain(tweet)));
+        contextDto.setAfter(tweetMapper.entitiesToDtos(afterChain(tweet)));
+        contextDto.setTarget(tweetMapper.entityToDto(tweet));
+        return contextDto;
     }
 
     @Override

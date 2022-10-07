@@ -17,7 +17,9 @@ import com.cooksys.socialmedia.services.UserServices;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +51,23 @@ public class UserServicesImpl implements UserServices{
         return userMapper.entityToDto(createdUser);
 
     }
+
+    @Override
+    public UserResponseDto getUser(String username) {
+        User user1 = new User();
+
+        for (User user: userRepository.findAll()){
+            user1.setCredentials(user.getCredentials());
+            user1.setProfile(user.getProfile());
+            user1.setJoined(user.getJoined());
+            if (user1.getCredentials().getUsername().equals(username)) {
+                return userMapper.entityToDto(user1);
+            }
+        }
+        return null;
+    }
+
+
 
 
 }

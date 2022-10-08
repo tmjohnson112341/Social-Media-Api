@@ -2,6 +2,11 @@ package com.cooksys.socialmedia.controllers;
 
 import com.cooksys.socialmedia.services.ValidateServices;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,22 +16,30 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/validate")
 public class ValidateController {
 
-    private ValidateServices validateServices;
+    private final ValidateServices validateServices;
 
 
     //@GetMapping("tag/exists/{label}") // Given hashtag exists
-
+    //have to test label without the hashtag
+    @GetMapping("/tag/exists/{label}")
+    public boolean validateTag(@PathVariable String label) {
+    	return validateServices.validateTag(String.join("", List.of("#", label)));
+    }
+    
 
     //@GetMapping("/username/exists/@{username}") // given username exists
+    
+    @GetMapping("/username/exists/@{username}")
+    public boolean validateUsername(@PathVariable String username) {
+    	return validateServices.validateUsername(username);
+    }
 
 
     //@GetMapping("/username/available/@{username}") //given username available
-
-
-
-
-
-
-
+    
+    @GetMapping("/username/available/@{username}")
+    public boolean validateUsernameAvailable(@PathVariable String username) {
+    	return validateServices.validateUsernameAvailable(username);
+    }
 
 }

@@ -1,16 +1,23 @@
 package com.cooksys.socialmedia.entities;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import javax.persistence.*;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.boot.context.config.Profiles;
 
 @Entity
 @NoArgsConstructor
@@ -37,18 +44,24 @@ public class User {
 	private List<Tweet> tweets;
 
 	@ManyToMany(mappedBy = "following")
-	private Set<User> followers;
+	private List<User> followers;
 
 	@ManyToMany
-	private Set<User> following;
+	@JoinTable(name = "followers_following")
+	private List<User> following;
 
-	@ManyToMany(mappedBy = "likes")
-	private Set<Tweet> likedTweets;
+	@ManyToMany
+	@JoinTable(
+			name = "user_likes",
+			joinColumns = @JoinColumn(name ="user_id"),
+			inverseJoinColumns = @JoinColumn(name ="tweet_id")
+			)
+	
+	private List<Tweet> likedTweets;
 
 	@ManyToMany(mappedBy = "mentions")
-	private Set<Tweet> tweetsMentioned;
-
-
+	@EqualsAndHashCode.Exclude
+	private List<Tweet> tweetsMentioned = new ArrayList<>();
 
 
 }

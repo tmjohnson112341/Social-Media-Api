@@ -3,7 +3,6 @@ package com.cooksys.socialmedia.entities;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,7 +17,6 @@ import javax.persistence.OneToMany;
 import org.hibernate.annotations.CreationTimestamp;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -32,10 +30,10 @@ public class Tweet {
 
 	@ManyToOne
 	private User author;
-	
+
 	@CreationTimestamp
 	private Timestamp posted;
-	
+
 	private boolean deleted = false;
 
 	@Column
@@ -47,27 +45,20 @@ public class Tweet {
 	@ManyToOne
 	private Tweet inReplyTo;
 
-
 	@OneToMany(mappedBy = "repostOf")
 	private List<Tweet> repostsOf;
-	
+
 	@ManyToOne
 	private Tweet repostOf;
 
-	@ManyToMany(mappedBy= "likedTweets")
+	@ManyToMany(mappedBy = "likedTweets")
 	private List<User> likes;
-	
+
 	@ManyToMany
-	@JoinTable(
-			name = "user_mentions",
-			joinColumns = @JoinColumn(name ="tweet_id"),
-			inverseJoinColumns = @JoinColumn(name ="user_id")
-			)
+	@JoinTable(name = "user_mentions", joinColumns = @JoinColumn(name = "tweet_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
 	private List<User> mentions = new ArrayList<>();
 
 	@ManyToMany
 	private List<Hashtag> hashtags;
 
-
-	
 }

@@ -3,6 +3,8 @@ package com.cooksys.socialmedia.controllers;
 import com.cooksys.socialmedia.services.ValidateServices;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,10 +20,10 @@ public class ValidateController {
 
 
     //@GetMapping("tag/exists/{label}") // Given hashtag exists
-    
-    @GetMapping("tag/exists/{label}")
+    //have to test label without the hashtag
+    @GetMapping("/tag/exists/{label}")
     public boolean validateTag(@PathVariable String label) {
-    	return validateServices.validateTag(label);
+    	return validateServices.validateTag(String.join("", List.of("#", label)));
     }
     
 
